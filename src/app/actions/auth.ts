@@ -36,7 +36,15 @@ export async function signInAction(_: AuthSonuc | undefined, formData: FormData)
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
-    return { ok: false, message: "E-posta veya şifre hatalı." };
+    const raw = (error.message || "").toLowerCase();
+    let message = "E-posta veya şifre hatalı.";
+    if (raw.includes("not confirmed") || raw.includes("confirm")) {
+      message =
+        "E-postan henüz onaylanmamış. Lütfen kayıt sonrası gönderdiğimiz onay bağlantısına tıkla. Mail gelmediyse şifre sıfırlama bağlantısı isteyebilirsin.";
+    } else if (raw.includes("rate")) {
+      message = "Çok fazla deneme yaptın. Lütfen biraz sonra tekrar dene.";
+    }
+    return { ok: false, message };
   }
   const nextParam = formData.get("next")?.toString();
   revalidatePath("/", "layout");
@@ -54,13 +62,21 @@ export async function signUpAction(_: AuthSonuc | undefined, formData: FormData)
     return { ok: false, message: issue.message, field: issue.path[0]?.toString() };
   }
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: { data: { name: parsed.data.name, role: "user" } },
   });
   if (error) {
     return { ok: false, message: "Hesap oluşturulamadı: " + error.message };
+  }
+  const needsConfirmation = !data.session;
+  if (needsConfirmation) {
+    return {
+      ok: true,
+      message:
+        "Hesabın oluşturuldu. E-postana gönderdiğimiz onay bağlantısına tıkladıktan sonra giriş yapabilirsin.",
+    };
   }
   revalidatePath("/", "layout");
   redirect("/profil");

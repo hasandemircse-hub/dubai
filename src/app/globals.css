@@ -1,26 +1,79 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-brand-green: #25d366;
+  --color-brand-green-dark: #128c7e;
+  --color-brand-green-soft: #e8faf0;
+
+  --color-bg-soft: #fafaf7;
+  --color-bg-warm: #f7f8f3;
+  --color-surface: #ffffff;
+
+  --color-text-main: #18181b;
+  --color-text-muted: #71717a;
+  --color-text-soft: #a1a1aa;
+
+  --color-border-soft: #e4e4e7;
+  --color-border-medium: #d4d4d8;
+
+  --color-badge-amber: #fef3c7;
+  --color-badge-amber-text: #92400e;
+  --color-state-warning: #fed7aa;
+  --color-state-warning-text: #9a3412;
+  --color-state-danger: #fecaca;
+  --color-state-danger-text: #991b1b;
+  --color-state-success: #bbf7d0;
+  --color-state-success-text: #166534;
+
+  --radius-card: 1.25rem;
+  --radius-pill: 9999px;
+
+  --shadow-card: 0 1px 2px rgba(24, 24, 27, 0.04), 0 4px 16px rgba(24, 24, 27, 0.04);
+  --shadow-floating: 0 8px 24px rgba(24, 24, 27, 0.08);
+
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-bg-soft);
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  input,
+  textarea,
+  select {
+    font-family: inherit;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+  }
+
+  .shell-width {
+    width: 100%;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
